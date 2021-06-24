@@ -8,6 +8,8 @@ import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
 import androidx.core.util.Consumer
+import com.google.android.gms.tasks.OnFailureListener
+import com.google.android.gms.tasks.OnSuccessListener
 import com.google.mlkit.vision.barcode.Barcode
 import com.google.mlkit.vision.barcode.BarcodeScannerOptions
 import io.flutter.embedding.android.FlutterActivity
@@ -115,10 +117,10 @@ class BarcodeReader(private val flutterTextureEntry: TextureRegistry.SurfaceText
                 .setBarcodeFormats(Barcode.FORMAT_UNKNOWN, *cameraConfig.formats)
                 .build()
 
-        barcodeDetector = MLKitBarcodeDetector(options, { codes ->
+        barcodeDetector = MLKitBarcodeDetector(options, OnSuccessListener { codes ->
             if (cameraConfig.mode.pause() && codes.isNotEmpty()) { stop() }
             listener(codes)
-        }, {
+        }, OnFailureListener {
             Log.e(TAG, "Error in MLKit", it)
         })
 
